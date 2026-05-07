@@ -1,0 +1,4 @@
+interface:
+  display_name: "分析文档"
+  short_description: "整理和维护系统分析类文档"
+  default_prompt: "Use this skill to structure, review, and rewrite analysis-style project documentation."

@@ -1,11 +1,13 @@
 ---
-name: documentation
-description: Structure, review, rewrite, and maintain project Markdown documentation. Use when Codex edits docs, plugin notes, architecture guides, usage guides, troubleshooting sections, READMEs, or other project documentation that needs clearer reader flow, heading hierarchy, conventions, or source-accurate terminology.
+name: analysis-documentation
+description: Create, review, restructure, and maintain analysis-style Markdown documentation. Use when Codex works on plugin analysis, engine subsystem analysis, architecture notes, source-code investigation reports, comparison documents, risk reviews, troubleshooting references, or other documents whose purpose is to explain how an existing system works.
 ---
 
-# Documentation
+# 分析文档
 
-Use this skill for project documentation work, especially Markdown files that explain systems, plugins, architecture, workflows, conventions, or troubleshooting.
+Use this skill for analysis documentation: Markdown files that explain an existing system, plugin, engine subsystem, source-code behavior, architecture, workflow, convention, risk, or troubleshooting path.
+
+Do not use this skill for implementation proposal documents whose main purpose is to define what this project should build next. Use the implementation-plan-documentation skill for that.
 
 ## Workflow
 
@@ -26,7 +28,7 @@ Use this skill for project documentation work, especially Markdown files that ex
 
 ## Recommended Outline
 
-For plugin or system analysis documents, strongly prefer this chapter shape, trimming sections that do not apply:
+For plugin, engine subsystem, or project-system analysis documents, strongly prefer this chapter shape, trimming sections that do not apply:
 
 1. Positioning and design intent: what problem the system solves, its boundary, and what it should not be used for.
 2. Modules and dependencies: runtime/editor modules, plugin dependencies, directories, and high-level system map.

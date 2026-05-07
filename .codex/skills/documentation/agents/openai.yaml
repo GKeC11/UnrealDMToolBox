@@ -1,4 +1,0 @@
-interface:
-  display_name: "Documentation"
-  short_description: "Structure and polish project documentation"
-  default_prompt: "Use this skill to structure, review, and rewrite project documentation."

@@ -11,28 +11,40 @@ public class DMToolBox : ModuleRules
 		PublicDependencyModuleNames.AddRange(
 			new string[]
 			{
+				// Core framework
+				"Core",
+				"CoreUObject",
+				"Engine",
+				"DeveloperSettings",
+
+				// UI framework
 				"CommonUI",
+				"UMG",
+
+				// Gameplay framework
+				"EnhancedInput",
+				"GameplayTags",
 			}
 		);
-
 
 		PrivateDependencyModuleNames.AddRange(
 			new string[]
 			{
-				"Core",
-				"CoreUObject",
-				"Engine",
+				// Asset and editor-adjacent runtime helpers
 				"AssetRegistry",
+
+				// Low-level UI implementation
 				"Slate",
 				"SlateCore",
-				"DeveloperSettings",
-				"UMG",
-				"CommonUI",
-				"GameplayTags",
-				"EnhancedInput",
+
+				// Puerts scripting
 				"Puerts",
 				"JsEnv",
+
+				// Gameplay messaging
 				"GameplayMessageRuntime",
+
+				// Server communication
 				"Json",
 				"JsonUtilities",
 				"WebSockets",
