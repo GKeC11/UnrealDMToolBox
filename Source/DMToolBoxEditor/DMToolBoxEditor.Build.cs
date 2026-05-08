@@ -18,6 +18,8 @@ public class DMToolBoxEditor : ModuleRules
             {
                 "CoreUObject",
                 "Engine",
+                "GameplayTags",
+                "LevelEditor",
                 "Slate",
                 "SlateCore"
             }

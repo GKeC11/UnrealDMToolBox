@@ -12,7 +12,7 @@ Do not use this skill for implementation proposal documents whose main purpose i
 ## Workflow
 
 1. Inspect the current outline before editing. Use heading search to understand hierarchy, numbering, and section order.
-2. Identify the reader path: why the topic exists, how it is structured, what core types and mechanisms matter, how to use it and adopt it, project conventions, troubleshooting, and glossary.
+2. Identify the reader path: why the topic exists, how it is structured, what core types and mechanisms matter, what the core execution flows are, how to use it and adopt it, project conventions, troubleshooting, and glossary.
 3. Move sections to the level where they belong. Preserve technical meaning and source names while improving structure.
 4. After moving or merging sections, renumber headings and scan for gaps, duplicates, and inconsistent heading depth.
 5. Verify source-defined names before correcting apparent typos in enums, APIs, tags, protocols, or file names.
@@ -34,11 +34,12 @@ For plugin, engine subsystem, or project-system analysis documents, strongly pre
 2. Modules and dependencies: runtime/editor modules, plugin dependencies, directories, and high-level system map.
 3. Implementation principles: core design ideas, lifecycle, data flow, scheduling path, authority/replication behavior, and responsibility split.
 4. Core types and mechanisms: key classes, interfaces, structs, enums, tags, and how their mechanisms work.
-5. Usage flow and adoption guidance: how to use the system and the recommended project path, combined unless they are clearly large independent topics.
-6. Project practice and conventions: current repository usage, dependency locations, concrete call sites, existing examples, naming rules, directory rules, tag domains, and similar project-specific standards.
-7. Plugin defects: source-confirmed bugs, questionable implementations, design limitations, version mismatches, missing lifecycle events, broken APIs, project integration gaps, and adoption risks. Put plugin defects and risk points under one chapter.
-8. FAQ and troubleshooting: common user questions, repeated adoption mistakes, diagnostic checks, and concrete fixes. Keep FAQ as a separate top-level chapter when it exists; do not bury it inside the defects chapter.
-9. Appendix: file index, glossary, references, and other material that should not interrupt the main reader path.
+5. Core execution flows: source-verified runtime call chains for the system's main capabilities, such as discovery, request creation, scheduling, behavior triggering, state transition, event dispatch, replication, and teardown.
+6. Usage flow and adoption guidance: how to use the system and the recommended project path, combined unless they are clearly large independent topics.
+7. Project practice and conventions: current repository usage, dependency locations, concrete call sites, existing examples, naming rules, directory rules, tag domains, and similar project-specific standards.
+8. Plugin defects: source-confirmed bugs, questionable implementations, design limitations, version mismatches, missing lifecycle events, broken APIs, project integration gaps, and adoption risks. Put plugin defects and risk points under one chapter.
+9. FAQ and troubleshooting: common user questions, repeated adoption mistakes, diagnostic checks, and concrete fixes. Keep FAQ as a separate top-level chapter when it exists; do not bury it inside the defects chapter.
+10. Appendix: file index, glossary, references, and other material that should not interrupt the main reader path.
 
 Use a shorter outline for small documents, but preserve the same order. For example: positioning, implementation principles, usage flow and adoption guidance, project practice and conventions, plugin defects, FAQ.
 
@@ -53,6 +54,7 @@ Use a shorter outline for small documents, but preserve the same order. For exam
 
 - Add short guide paragraphs at high-friction boundaries: after positioning, before long core-type lists, and before recommended adoption flows. These should explain how to read the next section, not repeat the whole document.
 - For long type or API summary sections, add a recommended reading order before the details. Start with the small set of types that explain the system's lifecycle and data flow.
+- For systems where behavior emerges from multiple subsystems, add a dedicated execution-flow chapter after core types. Break flows into source-verified stages, name the entry points and handoff methods, and distinguish configuration data, runtime summary/request objects, orchestration code, and final business behavior.
 - Keep FAQ entries action-oriented. Each FAQ should start with checks, likely causes, or concrete fixes, not background explanation.
 - For plugin analysis documents, add a dedicated defects chapter when the review finds source-confirmed defects, questionable implementation, integration gaps, or adoption risks. Each entry should include the affected symbol, file, subsystem, or project area; observed behavior or current gap; expected behavior; impact; and recommended handling. Keep all defect and risk entries in this chapter instead of creating a separate top-level risks chapter.
 - Keep FAQ as its own chapter when there are actual common questions or troubleshooting procedures. FAQ entries should be action-oriented and separate from defect records, even when they mention the same subsystem.
