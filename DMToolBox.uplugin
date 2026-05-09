@@ -21,6 +21,11 @@
 			"LoadingPhase": "Default"
 		},
 		{
+			"Name": "EnhancedDataTable",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},
+		{
 			"Name": "DMToolBoxEditor",
 			"Type": "Editor",
 			"LoadingPhase": "Default"

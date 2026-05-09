@@ -24,30 +24,36 @@ Do not use this skill for pure analysis of an existing plugin, engine subsystem,
 
 For module or feature implementation plans, prefer this shape and trim sections that do not apply:
 
-1. Goal and principles: what the plan builds, what it avoids, and the core implementation stance.
-2. Scope and non-goals: first-version behavior, excluded systems, and future boundaries.
-3. Module ownership and dependencies: code location, plugin enablement, Build.cs modules, optional future modules, and intentionally excluded dependencies.
-4. Current code structure: directories, files, classes, and whether the module is project code, plugin code, or asset-only.
-5. Core design: key classes, inheritance, data ownership, lifecycle, and responsibility split.
-6. Implementation steps: ordered steps that can be followed directly.
-7. Asset or configuration workflow: how designers or developers create and configure assets after code exists.
-8. Verification: compile checks, editor checks, runtime checks, and minimal test assets.
-9. Extension points: when and how to add later capabilities without changing the first-version boundary.
-10. Completion criteria: concrete conditions that define done.
+1. Goal, principles, and first-version scope: what the plan builds, what it avoids, first-version behavior, non-goals, and future boundaries.
+2. Module ownership, dependencies, and code structure: code location, plugin enablement, Build.cs modules, optional future modules, intentionally excluded dependencies, target directories, files, and ownership boundaries.
+3. Core types: key classes, inheritance, data ownership, lifecycle, responsibility split, and non-responsibilities.
+4. Feature implementation design: grouped implementation details such as third-party integration, data format conventions, parsing rules, write/update flow, editor or runtime call flow, and error handling.
+5. Implementation steps: ordered steps that can be followed directly.
+6. Usage rules: asset workflow, configuration workflow, naming rules, designer/developer usage guidance, and project conventions.
+7. Verification: compile checks, editor checks, runtime checks, import/export checks, and minimal test assets.
+8. Extension points: when and how to add later capabilities without changing the first-version boundary.
+9. Current progress, remaining items, and completion criteria: completed work, next steps, explicitly deferred work, and concrete conditions that define done.
 
-Use a shorter outline for small plans, but preserve the same order: goal, scope, dependencies, code structure, core design, steps, usage guidance, current progress and remaining items.
+Use a shorter outline for small plans, but preserve the same grouping order: goal/scope, ownership/dependencies/structure, core types, feature implementation design, steps, usage guidance, verification, current progress and remaining items.
 
 For small project modules whose first version is narrow, prefer this compact chapter order:
 
-1. 模块定位: explain the target, purpose, first-version scope, and non-goals.
-2. 依赖关系: list current required dependencies, conditional future dependencies, and dependencies intentionally not added.
-3. 核心类型和功能: explain key classes, inheritance, responsibilities, non-responsibilities, and where feature capability comes from.
-4. 实现步骤: list executable implementation steps in order.
-5. 使用规范和建议: describe asset usage, naming, tag conventions, designer workflow, and project usage rules.
-6. 当前进度和剩余事项: summarize current file layout, completed or expected outputs, optional follow-up items, and explicitly deferred work.
+1. 目标、原则和首版范围: explain the target, purpose, implementation stance, first-version scope, and non-goals.
+2. 模块归属、依赖和代码结构: list ownership, current required dependencies, conditional future dependencies, intentionally excluded dependencies, and target file layout.
+3. 核心类型: explain key classes, inheritance, responsibilities, non-responsibilities, and where feature capability comes from.
+4. 功能实现方案: group concrete design details such as integration plan, data format, parsing rules, write flow, editor call flow, and error handling.
+5. 实现步骤: list executable implementation steps in order.
+6. 使用规范: describe asset usage, naming, tag conventions, designer workflow, and project usage rules.
+7. 验证标准: describe compile, editor, runtime, import/export, and minimal asset checks.
+8. 后续扩展点: list deferred capabilities and when they should be added.
+9. 当前进度和剩余事项: summarize completed or expected outputs, optional follow-up items, explicitly deferred work, and completion criteria.
 
 ## Section Ordering Rules
 
+- Keep closely related plan context together. Put scope and non-goals under the goal/principles chapter instead of making a separate top-level chapter unless the scope is unusually large.
+- Put file layout under module ownership/dependencies instead of making a separate top-level chapter unless the document is mainly about repository migration or package layout.
+- Name the class-focused chapter "核心类型" when it primarily describes classes, structs, factories, assets, or editor toolkits. Use "核心设计" only when it covers broader architecture beyond types.
+- Group concrete feature mechanics under "功能实现方案". Examples include third-party integration, input/output format, parser behavior, validation, write flow, editor call flow, transactions, and error reporting.
 - Put core types and feature responsibilities before implementation steps. A reader should know what is being built before reading how to create files or edit config.
 - Do not put code skeletons only in the implementation steps when the same type also has a core-design section. Keep the main explanation in core design; implementation steps can reference the file path and include only the minimal skeleton needed for execution.
 - Put usage rules, asset conventions, naming guidance, and designer workflow after implementation steps unless they are prerequisites for writing the code.

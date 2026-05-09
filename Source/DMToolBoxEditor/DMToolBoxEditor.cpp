@@ -1,6 +1,6 @@
 #include "DMToolBoxEditor.h"
 
-#include "Tool/DMToolBoxEditorMenu.h"
+#include "Menu/DMToolBoxEditorMenu.h"
 
 #define LOCTEXT_NAMESPACE "FDMToolBoxEditorModule"
 

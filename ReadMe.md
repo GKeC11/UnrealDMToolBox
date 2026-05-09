@@ -11,19 +11,19 @@
 
 ## 目录概览
 
-- `Framework/UI`
+- `UI`
   - UI 运行时框架，负责 `UIScreen`、`UILayout`、Layer、Widget 容器
-- `Framework/Library`
+- `Library`
   - 蓝图/代码可调用的工具函数库
-- `Framework/Config`
+- `Config`
   - `DMToolBoxDeveloperSetting`，放插件级配置
-- `Framework/Gameplay`
+- `Gameplay`
   - 关卡初始化配置、世界设置、GameInstance 扩展
-- `Framework/Camera`
+- `Camera`
   - 相机 Actor 和相机管理组件
-- `Framework/Puerts`
+- `Puerts`
   - Puerts 辅助对象和注册逻辑
-- `Framework/Network`
+- `Network`
   - GameServer HTTP 客户端、Dedicated Server 生命周期辅助
 
 ## 网络职责边界
@@ -62,7 +62,7 @@ Lobby 的在线状态、房间删除、房主转移、准备状态同步仍由 G
 
 ## Developer Settings
 
-配置类在 [DMToolBoxDeveloperSetting.h](/d:/UGit/NoOutsiders/Plugins/DMToolBox/Source/DMToolBox/Framework/Config/DMToolBoxDeveloperSetting.h:8)。
+配置类在 [DMToolBoxDeveloperSetting.h](/d:/UGit/NoOutsiders/Plugins/DMToolBox/Source/DMToolBox/Config/DMToolBoxDeveloperSetting.h:8)。
 
 当前最重要的两个配置项：
 
@@ -77,7 +77,7 @@ Lobby 的在线状态、房间删除、房主转移、准备状态同步仍由 G
 
 ### 1. UISubsystem
 
-[UDMUISubsystem](/d:/UGit/NoOutsiders/Plugins/DMToolBox/Source/DMToolBox/Framework/UI/DMUISubsystem.cpp:5) 会在 `GameInstanceSubsystem` 初始化时：
+[UDMUISubsystem](/d:/UGit/NoOutsiders/Plugins/DMToolBox/Source/DMToolBox/UI/DMUISubsystem.cpp:5) 会在 `GameInstanceSubsystem` 初始化时：
 
 - 从 `DMToolBoxDeveloperSetting` 读取 `DefaultUIScreenClass`
 - 创建当前运行时的 `UIScreen`
@@ -91,7 +91,7 @@ Lobby 的在线状态、房间删除、房主转移、准备状态同步仍由 G
 
 ### 2. UIScreen
 
-[UDMUIScreen](/d:/UGit/NoOutsiders/Plugins/DMToolBox/Source/DMToolBox/Framework/UI/DMUIScreen.h:8) 负责：
+[UDMUIScreen](/d:/UGit/NoOutsiders/Plugins/DMToolBox/Source/DMToolBox/UI/DMUIScreen.h:8) 负责：
 
 - 为每个 `LocalPlayer` 创建/缓存一个 `UDMUILayout`
 - 把 Layout 加到视口
@@ -105,7 +105,7 @@ Lobby 的在线状态、房间删除、房主转移、准备状态同步仍由 G
 
 ### 3. UILayout 和 Layer
 
-[UDMUILayout](/d:/UGit/NoOutsiders/Plugins/DMToolBox/Source/DMToolBox/Framework/UI/DMUILayout.h:10) 是具体布局容器。
+[UDMUILayout](/d:/UGit/NoOutsiders/Plugins/DMToolBox/Source/DMToolBox/UI/DMUILayout.h:10) 是具体布局容器。
 
 它的职责是：
 
@@ -121,7 +121,7 @@ Lobby 的在线状态、房间删除、房主转移、准备状态同步仍由 G
 
 ### 4. 按 GameplayTag 打开 UI
 
-[UDMUILibrary](/d:/UGit/NoOutsiders/Plugins/DMToolBox/Source/DMToolBox/Framework/Library/DMUILibrary.h:9) 提供了按 `GameplayTag` 打开和关闭 UI 的入口：
+[UDMUILibrary](/d:/UGit/NoOutsiders/Plugins/DMToolBox/Source/DMToolBox/Library/DMUILibrary.h:9) 提供了按 `GameplayTag` 打开和关闭 UI 的入口：
 
 - `CreateWidgetByTagToLayer(WorldContextObject, WidgetTag, LayerTag)`
 - `RemoveWidgetByTag(WorldContextObject, WidgetTag)`
@@ -142,7 +142,7 @@ Lobby 的在线状态、房间删除、房主转移、准备状态同步仍由 G
 
 ## Widget 配置表
 
-数据结构在 [DMWidgetConfig.h](/d:/UGit/NoOutsiders/Plugins/DMToolBox/Source/DMToolBox/Framework/UI/DMWidgetConfig.h:8)。
+数据结构在 [DMWidgetConfig.h](/d:/UGit/NoOutsiders/Plugins/DMToolBox/Source/DMToolBox/UI/DMWidgetConfig.h:8)。
 
 每一行至少要有：
 
@@ -159,13 +159,13 @@ Lobby 的在线状态、房间删除、房主转移、准备状态同步仍由 G
 
 ### 1. WorldSetting
 
-[ADMWorldSetting](/d:/UGit/NoOutsiders/Plugins/DMToolBox/Source/DMToolBox/Framework/Gameplay/Core/DMWorldSetting.h:7) 扩展了世界设置，提供：
+[ADMWorldSetting](/d:/UGit/NoOutsiders/Plugins/DMToolBox/Source/DMToolBox/Gameplay/Core/DMWorldSetting.h:7) 扩展了世界设置，提供：
 
 - `LevelInitializationSetting`
 
 ### 2. LevelInitializationSetting
 
-[UDMLevelInitializationSetting](/d:/UGit/NoOutsiders/Plugins/DMToolBox/Source/DMToolBox/Framework/Gameplay/Data/DMLevelInitializationSetting.h:21) 是一个 `PrimaryDataAsset`，当前主要用于：
+[UDMLevelInitializationSetting](/d:/UGit/NoOutsiders/Plugins/DMToolBox/Source/DMToolBox/Gameplay/Data/DMLevelInitializationSetting.h:21) 是一个 `PrimaryDataAsset`，当前主要用于：
 
 - 配置关卡启动时默认要创建的 Widget
 
@@ -178,7 +178,7 @@ Lobby 的在线状态、房间删除、房主转移、准备状态同步仍由 G
 
 ### 3. SystemLibrary
 
-[UDMSystemLibrary](/d:/UGit/NoOutsiders/Plugins/DMToolBox/Source/DMToolBox/Framework/Library/DMSystemLibrary.h:7) 提供：
+[UDMSystemLibrary](/d:/UGit/NoOutsiders/Plugins/DMToolBox/Source/DMToolBox/Library/DMSystemLibrary.h:7) 提供：
 
 - `GetLevelInitializationSetting(UWorld*)`
 
@@ -186,7 +186,7 @@ Lobby 的在线状态、房间删除、房主转移、准备状态同步仍由 G
 
 ## 输入辅助
 
-[UDMGameplayLibrary](/d:/UGit/NoOutsiders/Plugins/DMToolBox/Source/DMToolBox/Framework/Library/DMGameplayLibrary.h:7) 提供两个常用函数：
+[UDMGameplayLibrary](/d:/UGit/NoOutsiders/Plugins/DMToolBox/Source/DMToolBox/Library/DMGameplayLibrary.h:7) 提供两个常用函数：
 
 - `RegisterInputMappingContext`
 - `UnregisterInputMappingContext`
@@ -201,7 +201,7 @@ Lobby 的在线状态、房间删除、房主转移、准备状态同步仍由 G
 
 ### 1. CameraManagerComponent
 
-[UDMCameraManagerComponent](/d:/UGit/NoOutsiders/Plugins/DMToolBox/Source/DMToolBox/Framework/Camera/DMCameraManagerComponent.h:12) 是最主要的相机管理入口。
+[UDMCameraManagerComponent](/d:/UGit/NoOutsiders/Plugins/DMToolBox/Source/DMToolBox/Camera/DMCameraManagerComponent.h:12) 是最主要的相机管理入口。
 
 它负责：
 
@@ -237,7 +237,7 @@ Lobby 的在线状态、房间删除、房主转移、准备状态同步仍由 G
 
 ### 1. DMGameInstance
 
-[UDMGameInstance](/d:/UGit/NoOutsiders/Plugins/DMToolBox/Source/DMToolBox/Framework/Gameplay/Core/DMGameInstance.h:5) 在原生 `GameInstance` 之上提供了：
+[UDMGameInstance](/d:/UGit/NoOutsiders/Plugins/DMToolBox/Source/DMToolBox/Gameplay/Core/DMGameInstance.h:5) 在原生 `GameInstance` 之上提供了：
 
 - `TS_Init()`
 
@@ -245,7 +245,7 @@ Lobby 的在线状态、房间删除、房主转移、准备状态同步仍由 G
 
 ### 2. DMPuertsLibrary
 
-[UDMPuertsLibrary](/d:/UGit/NoOutsiders/Plugins/DMToolBox/Source/DMToolBox/Framework/Library/DMPuertsLibrary.h:7) 提供：
+[UDMPuertsLibrary](/d:/UGit/NoOutsiders/Plugins/DMToolBox/Source/DMToolBox/Library/DMPuertsLibrary.h:7) 提供：
 
 - `RegisterConsoleCommand`
 
@@ -294,9 +294,9 @@ UDMUILibrary::RemoveWidgetByTag(this, WidgetTag);
 
 ## 当前项目里最常用的入口
 
-- [DMToolBoxDeveloperSetting.h](/d:/UGit/NoOutsiders/Plugins/DMToolBox/Source/DMToolBox/Framework/Config/DMToolBoxDeveloperSetting.h:8)
-- [DMUILibrary.h](/d:/UGit/NoOutsiders/Plugins/DMToolBox/Source/DMToolBox/Framework/Library/DMUILibrary.h:9)
-- [DMUIScreen.h](/d:/UGit/NoOutsiders/Plugins/DMToolBox/Source/DMToolBox/Framework/UI/DMUIScreen.h:8)
-- [DMUILayout.h](/d:/UGit/NoOutsiders/Plugins/DMToolBox/Source/DMToolBox/Framework/UI/DMUILayout.h:10)
-- [DMLevelInitializationSetting.h](/d:/UGit/NoOutsiders/Plugins/DMToolBox/Source/DMToolBox/Framework/Gameplay/Data/DMLevelInitializationSetting.h:21)
-- [DMCameraManagerComponent.h](/d:/UGit/NoOutsiders/Plugins/DMToolBox/Source/DMToolBox/Framework/Camera/DMCameraManagerComponent.h:12)
+- [DMToolBoxDeveloperSetting.h](/d:/UGit/NoOutsiders/Plugins/DMToolBox/Source/DMToolBox/Config/DMToolBoxDeveloperSetting.h:8)
+- [DMUILibrary.h](/d:/UGit/NoOutsiders/Plugins/DMToolBox/Source/DMToolBox/Library/DMUILibrary.h:9)
+- [DMUIScreen.h](/d:/UGit/NoOutsiders/Plugins/DMToolBox/Source/DMToolBox/UI/DMUIScreen.h:8)
+- [DMUILayout.h](/d:/UGit/NoOutsiders/Plugins/DMToolBox/Source/DMToolBox/UI/DMUILayout.h:10)
+- [DMLevelInitializationSetting.h](/d:/UGit/NoOutsiders/Plugins/DMToolBox/Source/DMToolBox/Gameplay/Data/DMLevelInitializationSetting.h:21)
+- [DMCameraManagerComponent.h](/d:/UGit/NoOutsiders/Plugins/DMToolBox/Source/DMToolBox/Camera/DMCameraManagerComponent.h:12)
