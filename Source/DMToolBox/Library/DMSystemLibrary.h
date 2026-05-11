@@ -6,7 +6,10 @@
 #include "DMSystemLibrary.generated.h"
 
 class UDMGameInstance;
+class APlayerController;
+class UEnhancedInputComponent;
 class UObject;
+class UUserWidget;
 class UWorld;
 
 UCLASS()
@@ -18,6 +21,8 @@ public:
 	static UDMGameInstance* ResolveDMGameInstance();
 	static UWorld* ResolveWorldFromContext(const UObject* WorldContextObject);
 	static int32 ResolveClientIndex(const UWorld* World);
+	static APlayerController* ResolveOwningPlayerFromWidget(UUserWidget* InWidget);
+	static UEnhancedInputComponent* ResolveEnhancedInputComponentFromWidget(UUserWidget* InWidget);
 
 	static UDMLevelInitializationSetting* GetLevelInitializationSetting(UWorld* InWorld);
 };

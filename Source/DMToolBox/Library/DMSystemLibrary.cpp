@@ -1,10 +1,13 @@
 #include "DMSystemLibrary.h"
 
+#include "Blueprint/UserWidget.h"
 #include "DMToolBox/Gameplay/Core/DMGameInstance.h"
 #include "DMToolBox/Gameplay/Core/DMWorldSetting.h"
+#include "EnhancedInputComponent.h"
 #include "Engine/Engine.h"
 #include "Engine/LocalPlayer.h"
 #include "Engine/World.h"
+#include "GameFramework/PlayerController.h"
 
 UDMGameInstance* UDMSystemLibrary::ResolveDMGameInstance()
 {
@@ -96,6 +99,47 @@ int32 UDMSystemLibrary::ResolveClientIndex(const UWorld* World)
 	}
 
 	return 0;
+}
+
+APlayerController* UDMSystemLibrary::ResolveOwningPlayerFromWidget(UUserWidget* InWidget)
+{
+	if (!IsValid(InWidget))
+	{
+		return nullptr;
+	}
+
+	if (APlayerController* OwningPlayer = InWidget->GetOwningPlayer())
+	{
+		return OwningPlayer;
+	}
+
+	UWorld* World = InWidget->GetWorld();
+	if (!World)
+	{
+		return nullptr;
+	}
+
+	for (FConstPlayerControllerIterator It = World->GetPlayerControllerIterator(); It; ++It)
+	{
+		APlayerController* PlayerController = It->Get();
+		if (IsValid(PlayerController) && PlayerController->IsLocalController())
+		{
+			return PlayerController;
+		}
+	}
+
+	return nullptr;
+}
+
+UEnhancedInputComponent* UDMSystemLibrary::ResolveEnhancedInputComponentFromWidget(UUserWidget* InWidget)
+{
+	APlayerController* PlayerController = ResolveOwningPlayerFromWidget(InWidget);
+	if (!IsValid(PlayerController))
+	{
+		return nullptr;
+	}
+
+	return Cast<UEnhancedInputComponent>(PlayerController->InputComponent);
 }
 
 UDMLevelInitializationSetting* UDMSystemLibrary::GetLevelInitializationSetting(UWorld* InWorld)

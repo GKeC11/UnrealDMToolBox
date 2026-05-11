@@ -10,10 +10,11 @@ Use this skill for the project's Puerts TypeScript layer. Keep the workflow cent
 ## Workflow
 
 1. Inspect the relevant TS source plus `package.json`, `tsconfig.json`, and `Plugins/Puerts/ReadMe.md` when build, debug, or mixin behavior matters.
-2. Edit TypeScript in `TypeScript/` or related typings/config files. Do not hand-edit generated JS by default.
-3. Do not compile after ordinary `TypeScript/` edits by default. Run `npm run build` only when the user explicitly asks for generated output, a build/debug task requires it, or you need to validate a risky TS change.
-4. When the task involves Blueprint Mixins or Unreal runtime behavior, verify the target blueprint type in `Typing/ue/ue_bp.d.ts` and confirm the mixin path is registered in `TypeScript/Framework/Mixin/MixinDefine.ts`.
-5. When debugging is requested, use the existing VS Code attach flow and keep source maps enabled.
+2. Before adding an internal helper, search `TypeScript/Library/` and existing UE Blueprint function libraries exposed on `UE.*` for equivalent behavior.
+3. Edit TypeScript in `TypeScript/` or related typings/config files. Do not hand-edit generated JS by default.
+4. Do not compile after ordinary `TypeScript/` edits by default. Run `npm run build` only when the user explicitly asks for generated output, a build/debug task requires it, or you need to validate a risky TS change.
+5. When the task involves Blueprint Mixins or Unreal runtime behavior, verify the target blueprint type in `Typing/ue/ue_bp.d.ts` and confirm the mixin path is registered in `TypeScript/Framework/Mixin/MixinDefine.ts`.
+6. When debugging is requested, use the existing VS Code attach flow and keep source maps enabled.
 
 ## Non-Negotiables
 
@@ -33,12 +34,14 @@ Use this skill for the project's Puerts TypeScript layer. Keep the workflow cent
 ## Code Writing Rules
 
 - Prefer small helper functions in shared libraries such as `TypeScript/Library/CommonLibrary.ts` when the same UE lookup logic is repeated across views/widgets.
+- If a helper looks reusable across widgets, gameplay scripts, or native bridge calls, prefer implementing it in the appropriate `TypeScript/Library/*Library.ts` file, or in a native `DM*Library` if it needs C++/UE access. If ownership is unclear, notify the developer that it is likely a common helper instead of silently burying it in one view.
 - In this project, do not add `| undefined` to every UE-returning helper by default. If the codebase convention for that helper is a concrete return type, it may still return `null` and let callers perform null checks.
 - For UE lookup helpers in business TS, prefer signatures like `private GetLobbyPlayerController(): UE.NOLobbyPlayerController` instead of `UE.NOLobbyPlayerController | undefined` when the helper naturally models a concrete UE object lookup.
 - When following the concrete-return-type convention in this repository, prefer plain `return null;` over noisy casts like `null as unknown as Foo` because `strictNullChecks` is disabled.
 - Keep business TS aligned with the generated UE typings when they are current. If the same turn changes C++ UFUNCTION/UPROPERTY/API surface that will be exposed to Puerts, business TS may call the new native API directly without waiting for regenerated typings.
 - If a Blueprint function library API is already present on `UE.*`, call it directly, for example `UE.DMPuertsLibrary.DiagnoseBlueprintClassLoad(path)`, and do not add `as any` just to bypass typings.
 - Avoid editing generated `Content/JavaScript` output unless the user explicitly asks for generated JS changes.
+- When a Puerts widget needs to listen to Enhanced Input `UInputAction` events, use `TypeScript/Library/WidgetLibrary.ts` as the TS-facing helper. It wraps `UE.DMUILibrary.BindEnhancedInputActionForWidget(...)` / `UnbindEnhancedInputActionForWidget(...)`, returns binding handles, and should be paired with widget `Construct`/`Destruct` lifecycle cleanup. The `UInputAction` reference should come from a generated Blueprint variable or another typed UE object reference; do not hand-roll direct `EnhancedInputComponent.BindAction` calls in business TS.
 - When code needs to wait for replication, initialization, async completion, or gameplay phase changes, listen for the owning delegate or message and advance the flow from that callback. Do not solve these waits with `setTimeout`, `setInterval`, or similar TS timer polling unless the user explicitly asks for a temporary workaround.
 - In this project, prefer the existing TS-facing Gameplay Message APIs before adding wrappers: send with `UE.GameplayMessageSubsystem.Generic_BroadcastMessage(...)`, and listen with `UE.AsyncAction_ListenForGameplayMessage.ListenForGameplayMessages(...)`, `OnMessageReceived`, and `GetPayload(...)`.
 - If using the Gameplay Message pattern, follow `Plugins/GameplayMessageRouter` lifecycle rules: listen on the specific channel/message type, keep the async action or handle alive only for the needed scope, and release or unbind it when the wait is fulfilled or the owner is destroyed.
@@ -54,8 +57,8 @@ Use this skill for the project's Puerts TypeScript layer. Keep the workflow cent
 - If the generated Blueprint type already contains widget members, keep the interface empty instead of re-declaring fields.
 - Prefer `PuertsUtil.LoadClass(...)` over direct `UE.Class.Load(...)`.
 - When UE runtime typings are missing or stale, prefer updating/regenerating `Typing/ue/ue.d.ts` instead of patching local business code with handcrafted UE type overlays, and do not hand-edit the generated `.d.ts` files directly.
-- If `ue_bp.d.ts` does not yet expose the Blueprint type, still prefer writing the inferred `UE.Game...` type path directly in code when the asset path is clear. Do not proactively downgrade to `CommonUserWidget`, `any`, or string-path loading just because typings are temporarily missing.
-- Only fall back to a full asset class path string when the UE namespace truly cannot be inferred or the task is explicitly a temporary experiment.
+- If `ue_bp.d.ts` does not yet expose the target Blueprint type, report that the generated Blueprint typings are missing and do not implement/register the mixin yet. Do not bypass the missing typing with `any`, `CommonUserWidget`, anonymous widget-member interfaces, inferred `UE.Game...` paths that do not typecheck, or string-path class loading.
+- Only use a full asset class path string when the user explicitly asks for a temporary experiment and accepts that it is not the normal project pattern.
 - After adding a new mixin file, register its path in `TypeScript/Framework/Mixin/MixinDefine.ts`.
 - When consuming an already-mixed Blueprint instance, cast to the concrete mixin class instead of repeating anonymous intersection types.
 - If a flow truly must wait, prefer a one-shot delegate binding or Gameplay Message listener over any TS timer. Only use a timer as a last-resort temporary patch when no event source exists and the user accepts that tradeoff.

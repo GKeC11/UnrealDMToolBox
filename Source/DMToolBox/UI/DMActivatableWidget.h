@@ -6,7 +6,7 @@
 #include "DMActivatableWidget.generated.h"
 
 UCLASS()
-class UDMActivatableWidget : public UCommonActivatableWidget
+class DMTOOLBOX_API UDMActivatableWidget : public UCommonActivatableWidget
 {
 	GENERATED_BODY()
 

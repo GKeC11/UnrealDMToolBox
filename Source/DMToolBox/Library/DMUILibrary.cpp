@@ -1,10 +1,14 @@
 #include "DMUILibrary.h"
 #include "DMToolBox/Common/DMMacros.h"
 #include "DMToolBox/Config/DMToolBoxDeveloperSetting.h"
+#include "DMToolBox/Library/DMSystemLibrary.h"
 #include "DMToolBox/UI/DMUIScreen.h"
 #include "DMToolBox/UI/DMWidgetConfig.h"
 #include "Engine/DataTable.h"
 #include "Engine/World.h"
+#include "EnhancedInputComponent.h"
+#include "GameFramework/PlayerController.h"
+#include "InputAction.h"
 
 namespace DMUILibraryPrivate
 {
@@ -91,6 +95,29 @@ namespace DMUILibraryPrivate
 
 		return Layout->GetLayerFromGameplayTag(InLayerTag);
 	}
+
+	static UEnhancedInputComponent* ResolveEnhancedInputComponent(UUserWidget* InWidget)
+	{
+		APlayerController* PlayerController = UDMSystemLibrary::ResolveOwningPlayerFromWidget(InWidget);
+		if (!IsValid(PlayerController))
+		{
+			DM_LOG(InWidget, LogTemp, Warning, TEXT("ResolveEnhancedInputComponent failed: owning player is invalid. Widget=%s"),
+				*GetNameSafe(InWidget));
+			return nullptr;
+		}
+
+		UEnhancedInputComponent* EnhancedInputComponent = UDMSystemLibrary::ResolveEnhancedInputComponentFromWidget(InWidget);
+		if (!IsValid(EnhancedInputComponent))
+		{
+			DM_LOG(PlayerController, LogTemp, Warning, TEXT("ResolveEnhancedInputComponent failed: InputComponent is not enhanced. Widget=%s, PC=%s, InputComponent=%s"),
+				*GetNameSafe(InWidget),
+				*GetNameSafe(PlayerController),
+				*GetNameSafe(PlayerController->InputComponent));
+			return nullptr;
+		}
+
+		return EnhancedInputComponent;
+	}
 }
 
 void UDMUILibrary::CreateWidgetToLayer(APlayerController* InPlayerController, TSubclassOf<UCommonActivatableWidget> InWidgetClass, FGameplayTag InLayerTag)
@@ -137,6 +164,101 @@ void UDMUILibrary::CreateWidgetToLayer(APlayerController* InPlayerController, TS
 		*GetNameSafe(InWidgetClass.Get()),
 		*InLayerTag.ToString());
 	Layer->AddWidget(InWidgetClass);
+}
+
+int32 UDMUILibrary::BindEnhancedInputActionForWidget(UUserWidget* InWidget, UInputAction* InInputAction,
+	ETriggerEvent InTriggerEvent, FDMUIEnhancedInputActionDelegate InCallback)
+{
+	if (!IsValid(InWidget) || !IsValid(InInputAction))
+	{
+		DM_LOG(InWidget, LogTemp, Warning, TEXT("BindEnhancedInputActionForWidget failed: Widget or InputAction is invalid. Widget=%s, InputAction=%s, TriggerEvent=%d"),
+			*GetNameSafe(InWidget),
+			*GetNameSafe(InInputAction),
+			static_cast<int32>(InTriggerEvent));
+		return 0;
+	}
+
+	if (InTriggerEvent == ETriggerEvent::None)
+	{
+		DM_LOG(InWidget, LogTemp, Warning, TEXT("BindEnhancedInputActionForWidget failed: TriggerEvent is None. Widget=%s, InputAction=%s"),
+			*GetNameSafe(InWidget),
+			*GetNameSafe(InInputAction));
+		return 0;
+	}
+
+	if (!InCallback.IsBound())
+	{
+		DM_LOG(InWidget, LogTemp, Warning, TEXT("BindEnhancedInputActionForWidget failed: Callback is not bound. Widget=%s, InputAction=%s, TriggerEvent=%d"),
+			*GetNameSafe(InWidget),
+			*GetNameSafe(InInputAction),
+			static_cast<int32>(InTriggerEvent));
+		return 0;
+	}
+
+	UEnhancedInputComponent* EnhancedInputComponent = DMUILibraryPrivate::ResolveEnhancedInputComponent(InWidget);
+	if (!IsValid(EnhancedInputComponent))
+	{
+		return 0;
+	}
+
+	const TWeakObjectPtr<UUserWidget> WeakWidget(InWidget);
+	FEnhancedInputActionEventBinding& Binding = EnhancedInputComponent->BindActionInstanceLambda(
+		InInputAction,
+		InTriggerEvent,
+		[WeakWidget, InCallback, InTriggerEvent](const FInputActionInstance& ActionInstance)
+		{
+			if (!WeakWidget.IsValid())
+			{
+				return;
+			}
+
+			InCallback.ExecuteIfBound(
+				ActionInstance.GetValue(),
+				ActionInstance.GetElapsedTime(),
+				ActionInstance.GetTriggeredTime(),
+				ActionInstance.GetSourceAction(),
+				InTriggerEvent);
+		});
+
+	const int32 BindingHandle = static_cast<int32>(Binding.GetHandle());
+	DM_LOG(InWidget, LogTemp, Log, TEXT("BindEnhancedInputActionForWidget success: Widget=%s, InputAction=%s, TriggerEvent=%d, Handle=%d"),
+		*GetNameSafe(InWidget),
+		*GetNameSafe(InInputAction),
+		static_cast<int32>(InTriggerEvent),
+		BindingHandle);
+	return BindingHandle;
+}
+
+bool UDMUILibrary::UnbindEnhancedInputActionForWidget(UUserWidget* InWidget, int32 InBindingHandle)
+{
+	if (!IsValid(InWidget) || InBindingHandle <= 0)
+	{
+		DM_LOG(InWidget, LogTemp, Warning, TEXT("UnbindEnhancedInputActionForWidget failed: Widget or handle is invalid. Widget=%s, Handle=%d"),
+			*GetNameSafe(InWidget),
+			InBindingHandle);
+		return false;
+	}
+
+	UEnhancedInputComponent* EnhancedInputComponent = DMUILibraryPrivate::ResolveEnhancedInputComponent(InWidget);
+	if (!IsValid(EnhancedInputComponent))
+	{
+		return false;
+	}
+
+	const bool bRemoved = EnhancedInputComponent->RemoveBindingByHandle(static_cast<uint32>(InBindingHandle));
+	if (bRemoved)
+	{
+		DM_LOG(InWidget, LogTemp, Log, TEXT("UnbindEnhancedInputActionForWidget success: Widget=%s, Handle=%d"),
+			*GetNameSafe(InWidget),
+			InBindingHandle);
+	}
+	else
+	{
+		DM_LOG(InWidget, LogTemp, Warning, TEXT("UnbindEnhancedInputActionForWidget failed: binding not found. Widget=%s, Handle=%d"),
+			*GetNameSafe(InWidget),
+			InBindingHandle);
+	}
+	return bRemoved;
 }
 
 bool UDMUILibrary::CreateWidgetByTagToLayer(UObject* WorldContextObject, FGameplayTag InWidgetTag, FGameplayTag InLayerTag)

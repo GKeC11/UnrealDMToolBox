@@ -10,11 +10,12 @@ Use this skill for Unreal Engine C++ work in this repository. Favor UE-native ex
 ## Workflow
 
 1. Inspect the target module, the nearest `.Build.cs`, and the existing class layout before adding code.
-2. Choose the smallest UE-native abstraction that solves the problem cleanly: component, subsystem, interface, function library, data asset, or actor class.
-3. Decide whether the change is local-only, server-authoritative, replicated, or editor-only before writing behavior.
-4. Implement the feature in the correct runtime or editor module and keep dependencies one-way where possible.
-5. Add brief comments for non-obvious intent, lifecycle assumptions, or replication behavior.
-6. If the change affects dedicated-server startup, GameMode/GameState server authority flow, GameServer integration, or other packaged Server runtime behavior, remind the user in the final response to package/rebuild the Server.
+2. Before adding an internal helper, search existing `Library` classes and nearby shared helpers for equivalent behavior.
+3. Choose the smallest UE-native abstraction that solves the problem cleanly: component, subsystem, interface, function library, data asset, or actor class.
+4. Decide whether the change is local-only, server-authoritative, replicated, or editor-only before writing behavior.
+5. Implement the feature in the correct runtime or editor module and keep dependencies one-way where possible.
+6. Add brief comments for non-obvious intent, lifecycle assumptions, or replication behavior.
+7. If the change affects dedicated-server startup, GameMode/GameState server authority flow, GameServer integration, or other packaged Server runtime behavior, remind the user in the final response to package/rebuild the Server.
 
 ## Architecture Rules
 
@@ -22,6 +23,7 @@ Use this skill for Unreal Engine C++ work in this repository. Favor UE-native ex
 - Use `UActorComponent` for attachable gameplay abilities or stateful behavior tied to an actor.
 - Use subsystems when the responsibility is global or long-lived, such as game-instance, world, or UI coordination.
 - Use function libraries only for stateless helpers. Do not hide mutable gameplay state in a blueprint or C++ library.
+- If a newly needed helper looks reusable across systems, prefer adding it to the appropriate `Library` class, such as `DMSystemLibrary`, `DMGameplayLibrary`, or `DMUILibrary`, instead of burying it as a private local function. If moving it would broaden API surface or ownership is unclear, call that out to the developer as a likely common helper before leaving it local.
 - Use interfaces, delegates, and narrow public methods to decouple systems instead of hard-coding direct knowledge between classes.
 - Reuse the existing `Plugins/DMToolBox/Source/DMToolBox/Framework/` folders when they already match the responsibility. Keep editor-only code inside `DMToolBoxEditor`.
 - Avoid introducing unnecessary hard references, circular dependencies, or tightly coupled ownership chains when a component, subsystem, or interface would keep the code cleaner.
