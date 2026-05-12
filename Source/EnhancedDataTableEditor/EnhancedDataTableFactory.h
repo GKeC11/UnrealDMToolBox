@@ -12,7 +12,7 @@
  * Factory for creating Enhanced DataTable assets while reusing the native DataTable row-struct picker.
  */
 UCLASS(hidecategories = Object)
-class ENHANCEDDATATABLE_API UEnhancedDataTableFactory : public UDataTableFactory
+class UEnhancedDataTableFactory : public UDataTableFactory
 {
 	GENERATED_BODY()
 

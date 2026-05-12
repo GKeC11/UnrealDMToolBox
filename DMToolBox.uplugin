@@ -26,6 +26,11 @@
 			"LoadingPhase": "Default"
 		},
 		{
+			"Name": "EnhancedDataTableEditor",
+			"Type": "Editor",
+			"LoadingPhase": "Default"
+		},
+		{
 			"Name": "DMToolBoxEditor",
 			"Type": "Editor",
 			"LoadingPhase": "Default"
